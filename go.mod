@@ -1,4 +1,4 @@
-module github.com/wuhan005/go-template
+module github.com/wuhan005/k8s-image-replacer
 
 go 1.19
 
