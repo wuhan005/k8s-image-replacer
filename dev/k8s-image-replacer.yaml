@@ -17,7 +17,6 @@ spec:
           image: registry.cn-hangzhou.aliyuncs.com/eggplant/k8s-image-replacer:latest
           ports:
             - containerPort: 443
-          imagePullPolicy: Never
           volumeMounts:
             - name: tls-cert
               mountPath: "/root/crt"
