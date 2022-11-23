@@ -30,7 +30,8 @@ cat dev/mutating-webhook-template.yaml | ./dev/webhook-patch-ca-bundle.sh > muta
 kubectl apply -f mutating-webhook.yaml
 ```
 
-If you want to set which pod's image to be replaced, check the Kubernetes
+**The pod with `k8s-image-replacer: enabled` label will be replaced image by default.** If you want to set which pod's
+image to be replaced, update the `dev/mutating-webhook-template.yaml` and check the Kubernetes
 document [here](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-objectselector)
 .
 
