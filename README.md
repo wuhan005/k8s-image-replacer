@@ -20,7 +20,7 @@ kubectl apply -f dev/k8s-image-replacer.yaml
 
 ### 3. Create the mutating webhook configuration for `k8s-image-replacer`
 
-Get the generated certificate and key from the cluster secret, then create a mutating webhook with the secret.
+Create a mutating webhook with the cluster CA bundle.
 
 ```bash
 # Replace the ${CA_BUNDLE} placeholder with the actual value.
