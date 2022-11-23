@@ -6,10 +6,10 @@ Replace image when creating pod, aims to speed up image pulling.
 
 ### 1. Generate certificate and key
 
-Run `dev/webhook-create-signed-cert.sh` to generate a server certificate/key pair.
+Clone this project. Run `dev/webhook-create-signed-cert.sh` to generate a server certificate/key pair.
 
 ```bash
-./webhook-create-signed-cert.sh --service k8s-image-replacer --namespace default --secret k8s-image-replacer-tls
+./dev/webhook-create-signed-cert.sh --service k8s-image-replacer --namespace default --secret k8s-image-replacer-tls
 ```
 
 ### 2. Deploy `k8s-image-replacer` into your cluster
@@ -42,7 +42,8 @@ Cloudflare Workers.
 ## How it works
 
 1. When a pod is created, the Kubernetes API server will send a request to the
-   `k8s-image-replacer` webhook. For more information, check the [Kubernetes document](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/).
+   `k8s-image-replacer` webhook. For more information, check
+   the [Kubernetes document](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/).
 2. The webhook service will check if the pod's image is in the replacement map in the
    configuration file.
 3. If the image is in the replacement map, the webhook will replace the image with the
