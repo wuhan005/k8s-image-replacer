@@ -10,6 +10,9 @@ jobs:
     name: Build and push Docker image
     runs-on: ubuntu-latest
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Build & Publish to Registry
         uses: wuhan005/publish-docker-action@master
         with:
