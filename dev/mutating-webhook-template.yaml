@@ -1,0 +1,27 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: k8s-image-replacer-webhook
+  labels:
+    app: k8s-image-replacer-webhook
+    kind: mutator
+webhooks:
+  - name: k8s-image-replacer.default.svc
+    objectSelector:
+      matchLabels:
+        k8s-image-replacer: enabled
+    rules:
+      - apiGroups:   ["*"]
+        apiVersions: ["*"]
+        operations:  ["CREATE", "UPDATE"]
+        resources:   ["pods"]
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1", "v1beta1"]
+    clientConfig:
+      service:
+        name: k8s-image-replacer
+        namespace: default
+        path: "/webhook"
+      caBundle: ${CA_BUNDLE}
+

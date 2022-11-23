@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-image-replacer-deployment
+spec:
+  selector:
+    matchLabels:
+      app: k8s-image-replacer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: k8s-image-replacer
+    spec:
+      containers:
+        - name: k8s-image-replacer
+          image: k8s-image-replacer:latest
+          ports:
+            - containerPort: 443
+          imagePullPolicy: Never
+          volumeMounts:
+            - name: tls-cert
+              mountPath: "/root/crt"
+              readOnly: true
+      volumes:
+        - name: tls-cert
+          secret:
+            secretName: "k8s-image-replacer-tls"
+            items:
+              - key: cert.pem
+                path: tls.crt
+              - key: key.pem
+                path: tls.key
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-image-replacer
+spec:
+  selector:
+    app: k8s-image-replacer
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+  type: LoadBalancer
