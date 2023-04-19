@@ -33,6 +33,14 @@ func (p *ImageReplacer) Mutate(ctx context.Context, _ *kwhmodel.AdmissionReview,
 
 	logrus.WithContext(ctx).WithField("pod_name", pod.Name).Info("Mutating pod")
 
+	for i, container := range pod.Spec.InitContainers {
+		imageName := container.Image
+		newImage := replaceImage(imageName)
+
+		logrus.WithContext(ctx).WithField("old_image", imageName).WithField("new_image", newImage).Info("Replacing image")
+		pod.Spec.InitContainers[i].Image = newImage
+	}
+
 	for i, container := range pod.Spec.Containers {
 		imageName := container.Image
 		newImage := replaceImage(imageName)
