@@ -1,6 +1,9 @@
 FROM golang:alpine as builder
 COPY . /home/
 WORKDIR /home/
+
+ENV GOPROXY="https://goproxy.cn,direct"
+
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o k8s-image-replacer .
 
 FROM alpine:latest as prod
