@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  config.yaml: |
+    {{- toYaml .Values.config | nindent 4 }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: {{ .Release.Name }}
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: tls
+          secret:
+            secretName: {{ .Release.Name }}-webhook
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-config
+      enableServiceLinks: false
+      automountServiceAccountToken: false
+      containers:
+        - name: {{ .Release.Name }}
+          image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config
+            - /config.yaml
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 3000
+            runAsUser: 3000
+            runAsNonRoot: true
+          volumeMounts:
+            - mountPath: /root/crt
+              name: tls
+            - mountPath: /config.yaml
+              name: config
+              subPath: config.yaml
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+    - port: 443
+      targetPort: 443
+      name: webhook
+  type: ClusterIP
