@@ -1,0 +1,45 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Release.Name }}-selfsigned
+spec:
+  selfSigned: { }
+
+---
+kind: Certificate
+apiVersion: cert-manager.io/v1
+metadata:
+  name: {{ .Release.Name }}-ca
+spec:
+  issuerRef:
+    name: {{ .Release.Name }}-selfsigned
+    kind: Issuer
+  secretName: {{ .Release.Name }}-ca
+  commonName: {{ .Release.Name }}
+  isCA: true
+  duration: '{{ mul 10 356 24 }}h'
+
+---
+kind: Issuer
+apiVersion: cert-manager.io/v1
+metadata:
+  name: {{ .Release.Name }}-ca
+spec:
+  ca:
+    secretName: {{ .Release.Name }}-ca
+
+---
+kind: Certificate
+apiVersion: cert-manager.io/v1
+metadata:
+  name: {{ .Release.Name }}-webhook
+spec:
+  issuerRef:
+    name: {{ .Release.Name }}-ca
+    kind: Issuer
+  secretName: {{ .Release.Name }}-webhook
+  duration: '{{ mul 356 24 }}h'
+  dnsNames:
+    - {{ .Release.Name }}
+    - {{ .Release.Name }}.{{ .Release.Namespace }}
+    - {{ .Release.Name }}.{{ .Release.Namespace }}.svc

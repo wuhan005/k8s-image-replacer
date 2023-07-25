@@ -28,6 +28,9 @@ cat dev/mutating-webhook-template.yaml | ./dev/webhook-patch-ca-bundle.sh > muta
 
 # Create the mutating webhook.
 kubectl apply -f mutating-webhook.yaml
+
+# Use helm (Requires cert-manager)
+# helm install image-replacer ./chart -n default 
 ```
 
 **The pod with `k8s-image-replacer: enabled` label will be replaced image by default.** If you want to set which pod's
